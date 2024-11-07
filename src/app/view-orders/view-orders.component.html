@@ -1,0 +1,43 @@
+<div class="container mt-4">
+  
+    <form [formGroup]="orderForm">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <!-- Campo de búsqueda -->
+        <input 
+          type="text" 
+          placeholder="Search by customer name or email..." 
+          formControlName="buscador" 
+          class="form-control" 
+          style="max-width: 300px;"
+        >
+        <button type="button" class="btn btn-primary" (click)="goTo('newOrder')">Create New Order</button>
+      </div>
+    </form>
+  
+    <div class="card">
+      <div class="card-body">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Código de orden</th>
+              <th>Cliente</th>
+              <th>Email</th>
+              <th>Productos</th>
+              <th>Fecha de compra</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let order of tableOrders">
+              <td>{{ order.orderCode }}</td>
+              <td>{{ order.customerName }}</td>
+              <td>{{ order.email }}</td>
+              <td>{{ order.products.length }} items</td>
+              <td>{{ order.timestamp }}</td>
+              <td>${{ order.total  }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>

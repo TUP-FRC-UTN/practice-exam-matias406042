@@ -1,0 +1,134 @@
+<div class="container mt-4">
+    <form [formGroup]="formulario"(ngSubmit)="sendForm()" class="bg-light p-4 rounded">
+      <!-- Nombre y Email -->
+      <div class="row mb-3">
+        <div class="col-md-5 mb-3">
+          <label class="form-label">Nombre</label>
+          <input formControlName="nombre"
+                 type="text" 
+                 class="form-control"
+                 (input)="logErrors(formulario)"
+                 [ngClass]="{'is-invalid':formulario.controls['nombre'].invalid && formulario.controls['nombre'].touched }">
+                 @if(formulario.controls['nombre'].invalid && formulario.controls['nombre'].touched){
+                    @if(formulario.controls['nombre'].errors?.['required']){
+                    <div class="text-danger">Nombre obligatorio</div>
+                    }
+                    @if (formulario.controls['nombre'].errors?.['minlength']) {
+                         <div class="text-danger">debe tener 3 letras por lo menos</div>
+
+                    }
+                }
+        </div>
+        
+        <div class="col-md-5 mb-3">
+          <label class="form-label">Email</label>
+          <input formControlName="email" 
+                 type="email" 
+                 class="form-control"      
+                [ngClass]="{'is-invalid':formulario.controls['email'].invalid && formulario.controls['email'].touched }">
+                 @if(formulario.controls['email'].invalid && formulario.controls['email'].touched){
+                    @if(formulario.controls['email'].errors?.['required']){
+                    <div class="text-danger"> obligatorio</div>
+                    }
+                    @if (formulario.controls['email'].errors?.['email']) {
+                         <div class="text-danger"> debe tener formato email</div>
+
+                    }
+                    @if(formulario.controls['email'].errors?.['maxOrdersExceeded']){
+                        <span class="text-danger">Excediste el nro de orden diario</span>
+                    }
+                }
+        </div>
+        <div class="col-md-2 mb-3 mt-4 text-center">
+        
+            <button type="button" 
+                    class="btn btn-primary"  
+                    (click)="agregarProducto()">producto
+            </button>
+          </div>
+      </div>
+      <!-- Lista de Productos -->
+      <div formArrayName="productosSeleccionados">
+        <div *ngFor="let producto of productosSeleccionados.controls; let i = index" 
+             [formGroupName]="i" 
+             class="row mb-3">
+          <div class="col-md-3 mb-2">
+            <label class="form-label">Producto</label>
+            <select formControlName="selectedProduct" class="form-select" [ngClass]="{'is-invalid':formulario.controls['productosSeleccionados'].invalid && formulario.controls['productosSeleccionados'].touched }">
+              <option value="" >Seleccione</option>   
+              <option *ngFor="let prod of productosDisponibles" [value]="prod.name">
+                {{ prod.name }}
+              </option>
+            </select>
+             <div *ngIf="producto.get('selectedProduct')?.errors?.['duplicateProduct']">
+                duplicado
+              </div>
+             <!-- Mensaje de error para producto no seleccionado -->
+             <div *ngIf="producto.get('selectedProduct')?.errors?.['notSelected'] && producto.get('selectedProduct')?.touched" class="text-danger">
+                 Debes seleccionar un producto
+             </div>
+          </div>
+           
+          <div class="col-md-2 mb-2">
+            <label class="form-label">Cantidad</label>
+            <input [disabled]="true"  formControlName="cantidad" 
+                   type="number" 
+                   class="form-control">
+
+          </div>
+  
+          <div class="col-md-2 mb-2">
+            <label class="form-label">Precio</label>
+            <input [disabled]="true"
+                   formControlName="precio" 
+                   type="text" 
+                   class="form-control" 
+                   readonly>
+          </div>
+  
+          <div class="col-md-2 mb-2">
+            <label class="form-label">Stock</label>
+            <input formControlName="stock" 
+                   type="text" 
+                   class="form-control" 
+                   readonly>
+          </div>
+  
+          <div class="col-md-3 d-flex align-items-end mb-2">
+            <button type="button" 
+                    class="btn btn-danger" 
+                    (click)="eliminarProducto(i)">
+              Eliminar
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        
+        <div formArrayName="productosSeleccionados" class="bg-primary">
+            <div *ngFor="let producto of productosSeleccionados.controls; let i = index" 
+                 [formGroupName]="i" 
+                 class="row mb-3">
+                 .{{ producto.get('selectedProduct')?.value || 'Ninguno' }}
+                 -cantidad:{{producto.get('cantidad')?.value||'no hay'}}
+                 -precio unitario : {{producto.get('precio')?.value}}
+                 -stock:{{producto.get('stock')?.value}}
+            </div>        
+        </div>
+      </div>
+      <!-- Total -->
+      <div class="row">
+        <div class="col-md-6 offset-md-6">
+          <label class="form-label">Total</label>
+          <input formControlName="total" 
+                 type="text" 
+                 class="form-control" 
+                 readonly>
+        </div>
+      </div>
+
+                <button type="submit" [disabled]="!formulario.valid">
+                   Save
+                 </button>    
+        </form>
+  </div>
